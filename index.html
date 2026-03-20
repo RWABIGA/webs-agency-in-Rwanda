@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LaunchRwanda — Startup &amp; Industrial — Web Agency</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            cream:   '#f2f0eb',
+            'cream-dark': '#e8e5de',
+            ink:     '#0d0d0d',
+            'ink-2': '#141414',
+            'ink-3': '#1c1c1c',
+            muted:   '#6b6b6b',
+            'muted-light': '#999999',
+            orange:  '#e8683c',
+            'orange-2': '#f0845c',
+            purple:  '#9b7ff4',
+            'purple-2': '#b49cf8',
+            gold:    '#c9a96e',
+          },
+          letterSpacing: {
+            'tightest': '-0.04em',
+            'tighter':  '-0.03em',
+            'tight':    '-0.02em',
+            'wide-2':   '0.12em',
+            'wide-3':   '0.18em',
+          },
+          boxShadow: {
+            'card-dark': '0 2px 0 rgba(255,255,255,0.04), 0 1px 40px rgba(0,0,0,0.5)',
+            'card-light': '0 2px 24px rgba(13,13,13,0.06), 0 1px 4px rgba(13,13,13,0.04)',
+            'orange-glow': '0 4px 32px rgba(232,104,60,0.25)',
+            'purple-glow': '0 4px 32px rgba(155,127,244,0.25)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #0d0d0d; color: #e8e5de; overflow-x: hidden; }
+
+    /* --- NOISE TEXTURE --- */
+    .noise::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.35;
+      mix-blend-mode: overlay;
+    }
+
+    /* --- RADIAL GLOW BG --- */
+    .glow-orange { background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(232,104,60,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,169,110,0.07) 0%, transparent 70%); }
+    .glow-purple { background: radial-gradient(ellipse 60% 50% at 20% 50%, rgba(155,127,244,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 80% 80%, rgba(96,165,250,0.06) 0%, transparent 70%); }
+
+    /* --- TOGGLE --- */
+    .toggle-btn { transition: color 0.25s, background 0.25s; }
+    .toggle-pill { transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+
+    /* --- PANEL --- */
+    .niche-panel { transition: opacity 0.3s ease, transform 0.3s ease; }
+    .niche-panel.hidden { display: none; }
+    .niche-panel.entering { animation: panelIn 0.4s cubic-bezier(0.22,1,0.36,1) forwards; }
+    @keyframes panelIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+    /* --- REVEAL --- */
+    .reveal { opacity:0; transform:translateY(24px); transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity:1; transform:none; }
+
+    /* --- HOVER STATES --- */
+    .svc-card { transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; }
+    .svc-card:hover { transform: translateY(-4px); }
+    .bridge-card { transition: background 0.25s; }
+    .nav-link { transition: opacity 0.2s; }
+    .nav-link:hover { opacity: 1 !important; }
+    .btn-primary { transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s; }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* --- SCROLLBAR --- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0d0d0d; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+
+    /* --- NAV SCROLL --- */
+    .nav-scrolled { background: rgba(13,13,13,0.95) !important; backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .nav-scrolled .nav-link { color: rgba(255,255,255,0.6) !important; }
+    .nav-scrolled .nav-link:hover { color: #ffffff !important; }
+    .nav-scrolled .nav-cta { color: #ffffff !important; border-color: rgba(255,255,255,0.2) !important; }
+    .nav-scrolled .nav-cta:hover { border-color: rgba(255,255,255,0.5) !important; }
+
+    /* Dropdown */
+    .dropdown { position: relative; }
+    .dropdown-menu {
+      position: absolute; top: calc(100% + 16px); left: 50%;
+      transform: translateX(-50%);
+      background: #141414; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 8px; min-width: 240px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transform: translateX(-50%) translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      z-index: 200;
+    }
+    .dropdown:hover .dropdown-menu,
+    .dropdown-menu:hover {
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -5px; left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 10px; height: 10px;
+      background: #141414; border-left: 1px solid rgba(255,255,255,0.08);
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.6);
+      transition: background 0.15s, color 0.15s; cursor: pointer;
+      text-decoration: none; white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; }
+    .dropdown-item-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .dropdown-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 4px 8px; }
+    .dropdown-label {
+      padding: 8px 14px 4px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.25);
+    }
+    /* Arrow on dropdown trigger */
+    .dropdown-arrow { display: inline-block; margin-left: 3px; font-size: 0.6rem; transition: transform 0.2s; }
+    .dropdown:hover .dropdown-arrow { transform: rotate(180deg); }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <!-- ============================================================
+       NAV
+  ============================================================ -->
+  <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-8 py-5 transition-all duration-300" style="background:transparent;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 group">
+        <div class="w-7 h-7 rounded-sm flex items-center justify-center text-xs font-black text-white" style="background:#e8683c;">L</div>
+        <span class="font-display font-bold text-white text-lg tracking-tight">LaunchRwanda</span>
+      </a>
+
+      <!-- Nav links -->
+      <ul class="hidden md:flex items-center gap-6">
+
+        <!-- Startup -->
+        <li class="dropdown">
+          <a href="#solutions" onclick="switchMode('startup');return true;"
+             class="nav-link flex items-center gap-1 text-xs font-semibold text-ink/70 hover:text-ink transition-colors duration-200">
+            Startup <span class="dropdown-arrow">▾</span>
+          </a>
+          <div class="dropdown-menu">
+            <div class="dropdown-label">Our Services</div>
+            <a href="#solutions" onclick="switchMode('startup')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#9b7ff4;"></span> Launch Landing Page
+            </a>
+            <a href="#solutions" onclick="switchMode('startup')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#9b7ff4;"></span> Waitlist &amp; Pre-launch Site
+            </a>
+            <a href="#solutions" onclick="switchMode('startup')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#9b7ff4;"></span> MVP Web App
+            </a>
+            <a href="#solutions" onclick="switchMode('startup')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#9b7ff4;"></span> SaaS Marketing Site
+            </a>
+            <a href="#solutions" onclick="switchMode('startup')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#9b7ff4;"></span> Growth &amp; SEO Marketing
+            </a>
+          </div>
+        </li>
+
+        <!-- Industrial Company -->
+        <li class="dropdown">
+          <a href="#solutions" onclick="switchMode('industrial');return true;"
+             class="nav-link flex items-center gap-1 text-xs font-semibold text-ink/70 hover:text-ink transition-colors duration-200">
+            Industrial Company <span class="dropdown-arrow">▾</span>
+          </a>
+          <div class="dropdown-menu">
+            <div class="dropdown-label">Our Services</div>
+            <a href="#solutions" onclick="switchMode('industrial')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#e8683c;"></span> Digital Credibility Site
+            </a>
+            <a href="#solutions" onclick="switchMode('industrial')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#e8683c;"></span> Product &amp; Equipment Catalog
+            </a>
+            <a href="#solutions" onclick="switchMode('industrial')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#e8683c;"></span> B2B Lead Generation
+            </a>
+            <a href="#solutions" onclick="switchMode('industrial')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#e8683c;"></span> Certifications Showcase
+            </a>
+            <a href="#solutions" onclick="switchMode('industrial')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#e8683c;"></span> Legacy Site Overhaul
+            </a>
+            <a href="#solutions" onclick="switchMode('industrial')" class="dropdown-item">
+              <span class="dropdown-item-dot" style="background:#e8683c;"></span> Industrial SEO &amp; Marketing
+            </a>
+          </div>
+        </li>
+
+        <li><a href="#results" class="nav-link text-xs font-semibold text-ink/70 hover:text-ink transition-colors duration-200">Results</a></li>
+        <li><a href="#about"   class="nav-link text-xs font-semibold text-ink/70 hover:text-ink transition-colors duration-200">About</a></li>
+        <li><a href="#contact" class="nav-link text-xs font-semibold text-ink/70 hover:text-ink transition-colors duration-200">Contact</a></li>
+
+      </ul>
+
+      <!-- CTA -->
+      <a href="#contact" class="nav-cta hidden md:inline-flex items-center gap-2 text-xs font-semibold tracking-wide-2 uppercase text-ink border border-ink/20 px-4 py-2 rounded-full hover:border-ink/50 hover:bg-ink/5 transition-colors duration-200">
+        Start a Project →
+      </a>
+
+      <!-- Mobile burger -->
+      <button id="burger" class="md:hidden flex flex-col gap-1.5 p-1" aria-label="Menu">
+        <span class="block w-5 h-px bg-white transition-all duration-300"></span>
+        <span class="block w-5 h-px bg-white transition-all duration-300"></span>
+        <span class="block w-3 h-px bg-white transition-all duration-300"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden fixed inset-0 z-40 bg-ink/96 backdrop-blur-xl flex flex-col items-center justify-center gap-6">
+    <a href="#solutions" onclick="switchMode('startup')"    class="mobile-link text-2xl font-display text-white">Startup</a>
+    <a href="#solutions" onclick="switchMode('industrial')" class="mobile-link text-2xl font-display text-white">Industrial Company</a>
+    <a href="#results"   class="mobile-link text-2xl font-display text-white">Results</a>
+    <a href="#about"     class="mobile-link text-2xl font-display text-white">About</a>
+    <a href="#contact"   class="mobile-link text-2xl font-display text-white">Contact</a>
+  </div>
+
+  <!-- ============================================================
+       HERO — two-column, cream bg (ref: playmoweb layout)
+  ============================================================ -->
+  <section class="relative bg-cream overflow-hidden" style="min-height:100vh;">
+
+    <!-- Warm radial glow -->
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 55% 70% at 75% 50%, rgba(232,104,60,0.10) 0%, transparent 65%), radial-gradient(ellipse 40% 50% at 20% 80%, rgba(155,127,244,0.07) 0%, transparent 60%);"></div>
+    <!-- Noise -->
+    <div class="noise absolute inset-0 pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-8 pt-36 pb-0 flex flex-col justify-between" style="min-height:100vh;">
+
+      <!-- Two-column content row -->
+      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-8 flex-1 pb-16">
+
+        <!-- LEFT — text -->
+        <div class="flex-1 max-w-xl">
+
+          <!-- Category label -->
+          <div class="flex items-center gap-2 mb-7">
+            <span class="w-6 h-px bg-ink/30"></span>
+            <span class="text-xs font-semibold tracking-wide-3 uppercase text-ink/50">Web Agency · Rwanda</span>
+          </div>
+
+          <!-- Heading -->
+          <h1 class="font-display font-black text-ink leading-none mb-7" style="font-size:clamp(2.8rem,5.5vw,5rem); letter-spacing:-0.04em;">
+            We Know Your World.<br />
+            <em class="not-italic" style="color:#e8683c;">We Launch It<br />Online.</em>
+          </h1>
+
+          <!-- Sub -->
+          <p class="text-muted leading-relaxed mb-10 max-w-md" style="font-size:1rem; line-height:1.8;">
+            Whether you're building the next big startup or running an industrial operation — we understand your business model, your buyers, and your urgency. No fluff. Just results.
+          </p>
+
+          <!-- CTAs -->
+          <div class="flex items-center gap-4 flex-wrap mb-14">
+            <a href="#solutions" class="btn-primary bg-ink text-cream font-semibold text-sm px-7 py-3.5 rounded-full hover:shadow-card-light">
+              See Our Solutions →
+            </a>
+            <a href="#results" class="text-sm font-medium text-muted underline underline-offset-4 hover:text-ink transition-colors duration-200">
+              View Results
+            </a>
+          </div>
+
+          <!-- Niche pills -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="flex items-center gap-2 text-xs font-semibold tracking-wide-2 uppercase border border-purple/30 bg-purple/8 px-4 py-1.5 rounded-full text-purple">
+              <span class="w-1.5 h-1.5 rounded-full bg-purple inline-block"></span> Startups
+            </span>
+            <span class="text-ink/25">+</span>
+            <span class="flex items-center gap-2 text-xs font-semibold tracking-wide-2 uppercase border border-orange/30 bg-orange/8 px-4 py-1.5 rounded-full text-orange">
+              <span class="w-1.5 h-1.5 rounded-full bg-orange inline-block"></span> Industrial Companies
+            </span>
+          </div>
+
+        </div>
+
+        <!-- RIGHT — floating visual mockup -->
+        <div class="flex-1 flex items-center justify-center relative" style="min-height:420px;">
+
+          <!-- Floating glow behind -->
+          <div class="absolute rounded-full pointer-events-none" style="width:380px;height:380px;background:radial-gradient(circle, rgba(232,104,60,0.12) 0%, transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+          <!-- Browser mockup card (main) -->
+          <div class="relative z-10 rounded-2xl overflow-hidden shadow-card-light border border-ink/8" style="width:320px;background:#fff;">
+            <!-- Browser bar -->
+            <div class="flex items-center gap-1.5 px-4 py-3 border-b border-ink/8" style="background:#f8f7f4;">
+              <span class="w-2.5 h-2.5 rounded-full" style="background:#ff5f57;"></span>
+              <span class="w-2.5 h-2.5 rounded-full" style="background:#ffbd2e;"></span>
+              <span class="w-2.5 h-2.5 rounded-full" style="background:#28c840;"></span>
+              <div class="flex-1 mx-3 bg-ink/6 rounded-full px-3 py-1 text-xs text-ink/30 font-medium">launchRwanda.rw</div>
+            </div>
+            <!-- Mockup content -->
+            <div class="p-5" style="background:linear-gradient(160deg,#f2f0eb,#ece9e2);">
+              <!-- Fake hero text -->
+              <div class="mb-4">
+                <div class="h-2 rounded-full bg-ink/15 w-3/4 mb-2"></div>
+                <div class="h-2 rounded-full bg-ink/10 w-1/2 mb-2"></div>
+                <div class="h-2 rounded-full bg-ink/8 w-2/3"></div>
+              </div>
+              <!-- Fake CTA button -->
+              <div class="h-7 rounded-full w-28 mb-5" style="background:#e8683c;"></div>
+              <!-- Fake stats row -->
+              <div class="grid grid-cols-3 gap-2">
+                <div class="rounded-xl p-3 text-center" style="background:rgba(232,104,60,0.12);">
+                  <div class="font-display font-black text-sm" style="color:#e8683c;">48h</div>
+                  <div class="text-xs text-ink/40 mt-0.5">Launch</div>
+                </div>
+                <div class="rounded-xl p-3 text-center" style="background:rgba(155,127,244,0.12);">
+                  <div class="font-display font-black text-sm" style="color:#9b7ff4;">120+</div>
+                  <div class="text-xs text-ink/40 mt-0.5">Sites</div>
+                </div>
+                <div class="rounded-xl p-3 text-center" style="background:rgba(13,13,13,0.06);">
+                  <div class="font-display font-black text-sm text-ink">3×</div>
+                  <div class="text-xs text-ink/40 mt-0.5">Faster</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating card 1 — top left -->
+          <div class="absolute z-20 rounded-xl px-4 py-3 shadow-card-light border border-ink/8 flex items-center gap-3" style="background:#fff;top:2%;left:2%;animation:floatA 5s ease-in-out infinite;">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(155,127,244,0.15);">
+              <svg class="w-4 h-4" style="color:#9b7ff4;" viewBox="0 0 20 20" fill="currentColor"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-ink">Startup Live</div>
+              <div class="text-xs text-muted">48h turnaround</div>
+            </div>
+          </div>
+
+          <!-- Floating card 2 — bottom right -->
+          <div class="absolute z-20 rounded-xl px-4 py-3 shadow-card-light border border-ink/8 flex items-center gap-3" style="background:#fff;bottom:10%;right:0%;animation:floatB 6s ease-in-out infinite;">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(232,104,60,0.15);">
+              <svg class="w-4 h-4" style="color:#e8683c;" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-ink">+340% Leads</div>
+              <div class="text-xs text-muted">Industrial client</div>
+            </div>
+          </div>
+
+          <!-- Floating badge — top right -->
+          <div class="absolute z-20 rounded-full px-3 py-1.5 shadow-card-light border border-ink/8 flex items-center gap-2" style="background:#fff;top:12%;right:4%;animation:floatC 7s ease-in-out infinite;">
+            <span class="w-2 h-2 rounded-full" style="background:#28c840;box-shadow:0 0 6px #28c840;"></span>
+            <span class="text-xs font-semibold text-ink">Live in Rwanda</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom decorative word (like "Pourquoi" in ref) -->
+      <div class="relative overflow-hidden h-24 pointer-events-none select-none">
+        <div class="font-display font-black text-ink/[0.055] whitespace-nowrap absolute bottom-0 left-1/2 -translate-x-1/2" style="font-size:9rem;letter-spacing:-0.04em;line-height:1;">
+          LaunchRwanda
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Keyframes for floating elements -->
+    <style>
+      @keyframes floatA { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-10px)} }
+      @keyframes floatB { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-14px)} }
+      @keyframes floatC { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+    </style>
+
+  </section>
+
+  <!-- ============================================================
+       WHO WE SERVE — 3 cards, dark
+  ============================================================ -->
+  <section class="relative bg-ink-2 px-6 py-24 border-t border-white/[0.06]" style="background:linear-gradient(180deg,#141414 0%,#0d0d0d 100%)">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-px border border-white/[0.06] rounded-2xl overflow-hidden">
+
+        <div class="p-10 bg-ink-2 hover:bg-ink-3 transition-colors duration-300 group">
+          <div class="w-10 h-10 mb-6 text-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-white text-xl mb-3 tracking-tight">Startups</h3>
+          <p class="text-muted-light text-sm leading-relaxed">You need a URL by Thursday. We build landing pages, MVPs, and web presences at the pace startups actually move.</p>
+        </div>
+
+        <div class="p-10 bg-ink-2 hover:bg-ink-3 transition-colors duration-300 border-l border-white/[0.06]">
+          <div class="w-10 h-10 mb-6 text-orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-white text-xl mb-3 tracking-tight">Industrial Companies</h3>
+          <p class="text-muted-light text-sm leading-relaxed">Your buyers Google you before they call. We build sites that win credibility, generate RFQs, and represent 30 years of expertise properly online.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SOLUTIONS — toggle
+  ============================================================ -->
+  <section class="relative bg-ink px-6 py-24 overflow-hidden" id="solutions">
+    <div class="absolute inset-0 pointer-events-none glow-orange opacity-60"></div>
+
+    <div class="relative max-w-7xl mx-auto">
+
+      <!-- Section label -->
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-wide-3 uppercase text-muted-light mb-5">Solutions</p>
+        <h2 class="font-display font-black text-white text-center tracking-tightest mb-5" style="font-size:clamp(2.5rem,5vw,4rem); letter-spacing:-0.03em;">
+          Pick Your Path.
+        </h2>
+        <p class="text-muted-light max-w-md mx-auto text-sm leading-relaxed">Tailored services for two very different worlds — same speed, same quality, same commitment.</p>
+      </div>
+
+      <!-- TOGGLE -->
+      <div class="flex flex-col items-center mb-14">
+        <p class="text-xs text-muted mb-4 tracking-wide">I need solutions for my…</p>
+        <div id="mainToggle" class="relative flex bg-ink-3 border border-white/[0.08] rounded-full p-1.5 gap-0" role="tablist">
+          <button id="tab-sta" data-target="startup" role="tab" aria-selected="true"
+            class="toggle-btn relative z-10 flex items-center gap-2.5 px-6 py-2.5 rounded-full text-sm font-semibold text-purple">
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/></svg>
+            Startup
+          </button>
+          <button id="tab-ind" data-target="industrial" role="tab" aria-selected="false"
+            class="toggle-btn relative z-10 flex items-center gap-2.5 px-6 py-2.5 rounded-full text-sm font-semibold text-white/40">
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+            Industrial Company
+          </button>
+          <div id="togglePill" class="toggle-pill absolute top-1.5 left-1.5 h-[calc(100%-12px)] rounded-full bg-purple/15 border border-purple/30" style="width:0;transform:translateX(0)"></div>
+        </div>
+      </div>
+
+      <!-- ── INDUSTRIAL PANEL ── -->
+      <div id="panel-ind" class="niche-panel hidden">
+
+        <!-- Pain points -->
+        <div class="mb-14">
+          <p class="text-xs font-semibold tracking-wide-3 uppercase text-orange mb-8 text-center">We Understand Your Struggle</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">01</div>
+              <h4 class="text-white font-semibold text-sm mb-2">Buyers Google you first</h4>
+              <p class="text-muted-light text-xs leading-relaxed">Before any procurement team calls, they visit your site. What they find decides whether you get the RFQ.</p>
+            </div>
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">02</div>
+              <h4 class="text-white font-semibold text-sm mb-2">Worse competitors look better</h4>
+              <p class="text-muted-light text-xs leading-relaxed">They've been in business 3 years. You've been in business 30. But their site looks sharper — and they're winning the meetings.</p>
+            </div>
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">03</div>
+              <h4 class="text-white font-semibold text-sm mb-2">Your site was built in 2011</h4>
+              <p class="text-muted-light text-xs leading-relaxed">No one has touched it since. Half the links are broken and it's not mobile-friendly in 2026.</p>
+            </div>
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">04</div>
+              <h4 class="text-white font-semibold text-sm mb-2">No "web person" on the team</h4>
+              <p class="text-muted-light text-xs leading-relaxed">You run a manufacturing operation. Managing a developer isn't your job. You need it done fast — once.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services -->
+        <p class="text-xs font-semibold tracking-wide-3 uppercase text-orange mb-8 text-center">Industrial Services</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+            <div class="w-9 h-9 rounded-lg bg-orange/15 flex items-center justify-center mb-5 text-orange">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Digital Credibility Site</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">A professional website that makes buyers confident before the first call.</p>
+            <span class="text-xs font-semibold text-orange tracking-wide">Live in 72h</span>
+          </div>
+
+          <div class="reveal svc-card border border-orange/25 rounded-xl p-7 bg-orange/[0.06] hover:border-orange/40 hover:shadow-orange-glow relative">
+            <div class="absolute top-4 right-4 text-xs font-bold tracking-wide-2 uppercase text-orange bg-orange/10 border border-orange/20 px-3 py-1 rounded-full">Popular</div>
+            <div class="w-9 h-9 rounded-lg bg-orange/15 flex items-center justify-center mb-5 text-orange">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Product &amp; Equipment Catalog</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">Filterable catalog with specs, datasheets, and RFQ per product.</p>
+            <span class="text-xs font-semibold text-orange tracking-wide">Live in 5 days</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+            <div class="w-9 h-9 rounded-lg bg-orange/15 flex items-center justify-center mb-5 text-orange">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">B2B Lead Generation</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">RFQ forms and quote builders wired to your sales team.</p>
+            <span class="text-xs font-semibold text-orange tracking-wide">Live in 4 days</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+            <div class="w-9 h-9 rounded-lg bg-orange/15 flex items-center justify-center mb-5 text-orange">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Certifications Showcase</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">ISO, CE, safety records — where procurement teams actually look.</p>
+            <span class="text-xs font-semibold text-orange tracking-wide">Live in 48h</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+            <div class="w-9 h-9 rounded-lg bg-orange/15 flex items-center justify-center mb-5 text-orange">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Legacy Site Overhaul</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">We rebuild your 2009 site in days — zero downtime, SEO preserved.</p>
+            <span class="text-xs font-semibold text-orange tracking-wide">Live in 5 days</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-orange/25 hover:shadow-orange-glow">
+            <div class="w-9 h-9 rounded-lg bg-orange/15 flex items-center justify-center mb-5 text-orange">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Industrial SEO &amp; Marketing</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">Technical SEO, Google Ads pages, and LinkedIn outreach built for B2B buyers.</p>
+            <span class="text-xs font-semibold text-orange tracking-wide">Ongoing</span>
+          </div>
+
+        </div>
+
+        <!-- Result strip -->
+        <div class="border border-orange/20 rounded-2xl p-8 bg-orange/[0.04] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <p class="text-xs font-bold tracking-wide-3 uppercase text-orange mb-3">Industrial Case Result</p>
+            <h3 class="text-white font-display font-bold text-xl tracking-tight mb-2">Nexus Manufacturing — +340% qualified leads in 60 days</h3>
+            <p class="text-muted-light text-sm leading-relaxed max-w-xl">30-year B2B supplier with zero web presence. We built a full catalog site with RFQ in 4 days. Within 60 days it was their #1 lead source.</p>
+          </div>
+          <a href="#contact" class="btn-primary flex-shrink-0 bg-orange text-white font-semibold text-sm px-6 py-3 rounded-full hover:shadow-orange-glow whitespace-nowrap">
+            Get the Same Results →
+          </a>
+        </div>
+
+      </div>
+      <!-- END INDUSTRIAL -->
+
+      <!-- ── STARTUP PANEL ── -->
+      <div id="panel-sta" class="niche-panel">
+
+        <!-- Pain points -->
+        <div class="mb-14">
+          <p class="text-xs font-semibold tracking-wide-3 uppercase text-purple mb-8 text-center">We Understand Your Struggle</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">01</div>
+              <h4 class="text-white font-semibold text-sm mb-2">You need a URL by Thursday</h4>
+              <p class="text-muted-light text-xs leading-relaxed">VCs Google you before the meeting. If there's nothing there — or something amateur — you've already lost ground.</p>
+            </div>
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">02</div>
+              <h4 class="text-white font-semibold text-sm mb-2">Product isn't ready yet</h4>
+              <p class="text-muted-light text-xs leading-relaxed">Every week offline is traction you'll never recover. Build your audience before you build your app.</p>
+            </div>
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">03</div>
+              <h4 class="text-white font-semibold text-sm mb-2">Agencies move too slow</h4>
+              <p class="text-muted-light text-xs leading-relaxed">6-week timelines. $30k proposals. Discovery phases longer than your last pivot. You move in weeks, not quarters.</p>
+            </div>
+            <div class="reveal svc-card border border-white/[0.06] rounded-xl p-6 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+              <div class="text-4xl font-display font-black text-white/[0.06] mb-4 leading-none">04</div>
+              <h4 class="text-white font-semibold text-sm mb-2">Funded competitors look miles ahead</h4>
+              <p class="text-muted-light text-xs leading-relaxed">They spent $50k on a Webflow agency. Your site needs to match their credibility without the budget.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services -->
+        <p class="text-xs font-semibold tracking-wide-3 uppercase text-purple mb-8 text-center">Startup Services</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+            <div class="w-9 h-9 rounded-lg bg-purple/15 flex items-center justify-center mb-5 text-purple">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Launch Landing Page</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">Your first public page, live in 48h. Built to convert from the very first visitor.</p>
+            <span class="text-xs font-semibold text-purple tracking-wide">Live in 48h</span>
+          </div>
+
+          <div class="reveal svc-card border border-purple/25 rounded-xl p-7 bg-purple/[0.06] hover:border-purple/40 hover:shadow-purple-glow relative">
+            <div class="absolute top-4 right-4 text-xs font-bold tracking-wide-2 uppercase text-purple bg-purple/10 border border-purple/20 px-3 py-1 rounded-full">Popular</div>
+            <div class="w-9 h-9 rounded-lg bg-purple/15 flex items-center justify-center mb-5 text-purple">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Waitlist &amp; Pre-launch Site</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">Start collecting emails and validating demand before a single line of app code is written.</p>
+            <span class="text-xs font-semibold text-purple tracking-wide">Live in 48h</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+            <div class="w-9 h-9 rounded-lg bg-purple/15 flex items-center justify-center mb-5 text-purple">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">MVP Web App</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">Core product built fast — enough to validate, enough to demo to your first users.</p>
+            <span class="text-xs font-semibold text-purple tracking-wide">2–4 weeks</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+            <div class="w-9 h-9 rounded-lg bg-purple/15 flex items-center justify-center mb-5 text-purple">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">SaaS Marketing Site</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">Features, pricing, signup — structured to convert free trials into paying customers.</p>
+            <span class="text-xs font-semibold text-purple tracking-wide">Live in 4 days</span>
+          </div>
+
+          <div class="reveal svc-card border border-white/[0.06] rounded-xl p-7 bg-ink-2 hover:border-purple/25 hover:shadow-purple-glow">
+            <div class="w-9 h-9 rounded-lg bg-purple/15 flex items-center justify-center mb-5 text-purple">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-white font-semibold text-base mb-2 tracking-tight">Growth &amp; SEO Marketing</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-4">SEO, email sequences, analytics, and paid ads pages that scale with your growth.</p>
+            <span class="text-xs font-semibold text-purple tracking-wide">Ongoing</span>
+          </div>
+
+        </div>
+
+        <!-- Result strip -->
+        <div class="border border-purple/20 rounded-2xl p-8 bg-purple/[0.04] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <p class="text-xs font-bold tracking-wide-3 uppercase text-purple mb-3">Startup Case Result</p>
+            <h3 class="text-white font-display font-bold text-xl tracking-tight mb-2">PulseStart — 2,800 waitlist signups before launch</h3>
+            <p class="text-muted-light text-sm leading-relaxed max-w-xl">Pre-product startup. 48h to launch. Nearly 3,000 signups and seed funding conversations before writing their first function.</p>
+          </div>
+          <a href="#contact" class="btn-primary flex-shrink-0 bg-purple text-white font-semibold text-sm px-6 py-3 rounded-full hover:shadow-purple-glow whitespace-nowrap">
+            Get the Same Results →
+          </a>
+        </div>
+
+      </div>
+      <!-- END STARTUP -->
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESULTS
+  ============================================================ -->
+  <section class="relative bg-ink px-6 py-24 overflow-hidden" id="results">
+    <div class="absolute inset-0 glow-purple opacity-50 pointer-events-none"></div>
+    <div class="relative max-w-7xl mx-auto">
+
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-wide-3 uppercase text-muted-light mb-5">Proven Results</p>
+        <h2 class="font-display font-black text-white tracking-tightest" style="font-size:clamp(2.5rem,5vw,4rem); letter-spacing:-0.03em;">
+          Two Worlds.<br /><em class="not-italic text-purple-2">Same Outcomes.</em>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+
+        <div class="reveal border border-purple/20 rounded-2xl p-8 bg-ink-2 hover:border-purple/35 transition-colors duration-300">
+          <p class="text-xs font-bold tracking-wide-3 uppercase text-purple mb-6">Startup</p>
+          <h3 class="font-display font-bold text-white text-2xl tracking-tight mb-2">Orbita Systems</h3>
+          <p class="text-purple-2 text-sm font-semibold mb-4">Closed seed round 3 weeks after launch</p>
+          <p class="text-muted-light text-sm leading-relaxed mb-6">B2B SaaS startup needed a site before investor meetings. We launched in 72h. Three weeks later they closed their seed round.</p>
+          <div class="flex gap-6 pt-6 border-t border-white/[0.06]">
+            <div><div class="text-2xl font-display font-black text-purple">72h</div><div class="text-xs text-muted mt-1">to launch</div></div>
+            <div><div class="text-2xl font-display font-black text-purple">Seed</div><div class="text-xs text-muted mt-1">round closed</div></div>
+          </div>
+          <blockquote class="mt-6 pt-6 border-t border-white/[0.06] text-sm text-muted-light italic leading-relaxed border-l-2 border-l-purple pl-4">
+            "Every VC had already been on the site. It set the tone before we walked in."
+            <cite class="not-italic block text-xs text-muted mt-2">— Laila Morin, Co-founder</cite>
+          </blockquote>
+        </div>
+
+        <div class="reveal border border-orange/20 rounded-2xl p-8 bg-ink-2 hover:border-orange/35 transition-colors duration-300">
+          <p class="text-xs font-bold tracking-wide-3 uppercase text-orange mb-6">Industrial</p>
+          <h3 class="font-display font-bold text-white text-2xl tracking-tight mb-2">ArcBuild Steel</h3>
+          <p class="text-orange text-sm font-semibold mb-4">Won a €1.2M contract thanks to the new site</p>
+          <p class="text-muted-light text-sm leading-relaxed mb-6">"It looked like you were a serious operation." A construction group visited their new site before a supplier meeting. The deal was signed that week.</p>
+          <div class="flex gap-6 pt-6 border-t border-white/[0.06]">
+            <div><div class="text-2xl font-display font-black text-orange">3 days</div><div class="text-xs text-muted mt-1">to launch</div></div>
+            <div><div class="text-2xl font-display font-black text-orange">€1.2M</div><div class="text-xs text-muted mt-1">contract won</div></div>
+          </div>
+          <blockquote class="mt-6 pt-6 border-t border-white/[0.06] text-sm text-muted-light italic leading-relaxed border-l-2 border-l-orange pl-4">
+            "We were embarrassed to send people to our old site. Now we lead with it."
+            <cite class="not-italic block text-xs text-muted mt-2">— Thomas Lefèvre, Director</cite>
+          </blockquote>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROCESS — light section
+  ============================================================ -->
+  <section class="relative bg-cream px-6 py-24 overflow-hidden" id="process">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-wide-3 uppercase text-muted mb-5">How It Works</p>
+        <h2 class="font-display font-black text-ink tracking-tightest" style="font-size:clamp(2.5rem,5vw,4rem); letter-spacing:-0.03em;">
+          Live in 3 Steps.
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-px border border-ink/10 rounded-2xl overflow-hidden">
+        <div class="reveal p-10 bg-cream hover:bg-cream-dark transition-colors duration-300">
+          <div class="text-6xl font-display font-black text-ink/[0.06] mb-6 leading-none">01</div>
+          <h3 class="font-display font-bold text-ink text-xl mb-3 tracking-tight">Discovery Call</h3>
+          <p class="text-muted text-sm leading-relaxed">30 minutes. Smart questions about your buyers, goals, and timeline. No deck, no pitch.</p>
+        </div>
+        <div class="reveal p-10 bg-cream hover:bg-cream-dark transition-colors duration-300 border-l border-r border-ink/10">
+          <div class="text-6xl font-display font-black text-ink/[0.06] mb-6 leading-none">02</div>
+          <h3 class="font-display font-bold text-ink text-xl mb-3 tracking-tight">Build Sprint</h3>
+          <p class="text-muted text-sm leading-relaxed">We design and build fast. Real progress every day. One round of feedback — then we finalize.</p>
+        </div>
+        <div class="reveal p-10 bg-cream hover:bg-cream-dark transition-colors duration-300">
+          <div class="text-6xl font-display font-black text-ink/[0.06] mb-6 leading-none">03</div>
+          <h3 class="font-display font-bold text-ink text-xl mb-3 tracking-tight">Launch &amp; Hand Off</h3>
+          <p class="text-muted text-sm leading-relaxed">Hosting, domain, SEO basics, performance. Then we hand over the keys — fully documented.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TESTIMONIALS — dark
+  ============================================================ -->
+  <section class="relative bg-ink-2 px-6 py-24 border-t border-white/[0.05]" id="about">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-wide-3 uppercase text-muted-light mb-5">Testimonials</p>
+        <h2 class="font-display font-black text-white tracking-tightest" style="font-size:clamp(2.5rem,5vw,4rem); letter-spacing:-0.03em;">
+          Straight from the<br /><em class="not-italic text-gold">People We've Helped.</em>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="reveal border border-purple/15 rounded-2xl p-8 bg-ink-2">
+          <p class="text-xs font-bold tracking-wide-3 uppercase text-purple mb-6">Startup</p>
+          <p class="text-white/80 text-sm leading-relaxed mb-6 italic">"As a founder you're managing 40 things at once. Having a team that moves at startup speed and just builds — without endless meetings — was exactly what we needed."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-purple flex items-center justify-center text-xs font-black text-white">SK</div>
+            <div><div class="text-sm font-semibold text-white">Sophie Kim</div><div class="text-xs text-muted">Founder, PulseStart</div></div>
+          </div>
+        </div>
+
+        <div class="reveal border border-purple/15 rounded-2xl p-8 bg-ink-2">
+          <p class="text-xs font-bold tracking-wide-3 uppercase text-purple mb-6">Startup</p>
+          <p class="text-white/80 text-sm leading-relaxed mb-6 italic">"Every VC we met had already visited our site before the meeting. It set the credibility baseline before we walked in. Not something we expected from a site built in 72 hours."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-purple flex items-center justify-center text-xs font-black text-white">LM</div>
+            <div><div class="text-sm font-semibold text-white">Laila Morin</div><div class="text-xs text-muted">Co-founder, Orbita Systems</div></div>
+          </div>
+        </div>
+
+        <div class="reveal border border-orange/15 rounded-2xl p-8 bg-ink-2">
+          <p class="text-xs font-bold tracking-wide-3 uppercase text-orange mb-6">Industrial</p>
+          <p class="text-white/80 text-sm leading-relaxed mb-6 italic">"I've worked with three agencies. None understood the B2B industrial world. LaunchRwanda got it on the first call. The site was live before I expected a proposal from anyone else."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-orange flex items-center justify-center text-xs font-black text-white">MR</div>
+            <div><div class="text-sm font-semibold text-white">Marc Renaud</div><div class="text-xs text-muted">CEO, Nexus Manufacturing</div></div>
+          </div>
+        </div>
+
+        <div class="reveal border border-orange/15 rounded-2xl p-8 bg-ink-2">
+          <p class="text-xs font-bold tracking-wide-3 uppercase text-orange mb-6">Industrial</p>
+          <p class="text-white/80 text-sm leading-relaxed mb-6 italic">"We needed to show up like a serious European supplier online. LaunchRwanda delivered a site that matched our actual capabilities — in three days. We don't get 'nice website' comments. We get orders."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-orange flex items-center justify-center text-xs font-black text-white">TL</div>
+            <div><div class="text-sm font-semibold text-white">Thomas Lefèvre</div><div class="text-xs text-muted">Director, ArcBuild Steel</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA — full width, large text (like reference "LET'S WORK TOGETHER")
+  ============================================================ -->
+  <section class="relative bg-ink px-6 py-28 overflow-hidden border-t border-white/[0.05]" id="contact">
+    <div class="absolute inset-0 glow-orange opacity-40 pointer-events-none"></div>
+    <div class="relative max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
+
+      <div class="flex-1">
+        <h2 class="font-display font-black text-white tracking-tightest leading-none mb-6" style="font-size:clamp(3rem,7vw,6rem); letter-spacing:-0.04em;">
+          LET'S LAUNCH<br />YOUR PROJECT.
+        </h2>
+        <p class="text-muted-light max-w-md leading-relaxed mb-8">Tell us about your project. We'll reply within a few hours — not days.</p>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2 text-sm text-muted-light"><span class="text-orange font-bold">✓</span> Free 30-min strategy call</div>
+          <div class="flex items-center gap-2 text-sm text-muted-light"><span class="text-orange font-bold">✓</span> Transparent pricing, no surprises</div>
+          <div class="flex items-center gap-2 text-sm text-muted-light"><span class="text-orange font-bold">✓</span> Live in 48–72 hours</div>
+          <div class="flex items-center gap-2 text-sm text-muted-light"><span class="text-orange font-bold">✓</span> Industrial &amp; Startup experts</div>
+        </div>
+      </div>
+
+      <form id="contactForm" class="w-full md:w-[460px] bg-ink-2 border border-white/[0.08] rounded-2xl p-8 flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-semibold tracking-wide uppercase text-muted">Name</label>
+            <input type="text" placeholder="Marc Dupont" required class="bg-ink-3 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-orange/50 transition-colors duration-200" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-semibold tracking-wide uppercase text-muted">Company</label>
+            <input type="text" placeholder="Acme Co." class="bg-ink-3 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-orange/50 transition-colors duration-200" />
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold tracking-wide uppercase text-muted">Email</label>
+          <input type="email" placeholder="you@company.com" required class="bg-ink-3 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-orange/50 transition-colors duration-200" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold tracking-wide uppercase text-muted">I am a…</label>
+          <select class="bg-ink-3 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white/60 focus:outline-none focus:border-orange/50 transition-colors duration-200">
+            <option value="">Select your profile</option>
+            <option>Industrial / Manufacturing Company</option>
+            <option>Startup / Scale-up</option>
+            <option>Small Business</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold tracking-wide uppercase text-muted">Project Brief</label>
+          <textarea rows="3" placeholder="Tell us what you need and your timeline…" class="bg-ink-3 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-orange/50 transition-colors duration-200 resize-none"></textarea>
+        </div>
+        <button type="submit" class="btn-primary w-full bg-orange text-white font-semibold text-sm py-3.5 rounded-full hover:shadow-orange-glow focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange mt-1">
+          Send My Request →
+        </button>
+        <p class="text-center text-xs text-muted">We reply within 2 hours during business hours.</p>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="bg-ink-2 border-t border-white/[0.05] px-6 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pb-12 border-b border-white/[0.05]">
+
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-7 h-7 rounded-sm flex items-center justify-center text-xs font-black text-white" style="background:#e8683c;">L</div>
+            <span class="font-display font-bold text-white text-lg tracking-tight">LaunchRwanda</span>
+          </div>
+          <p class="text-muted-light text-sm leading-relaxed max-w-xs mb-6">Web strategy and development for industrial companies and startups who need to win online — fast.</p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 border border-white/10 rounded-lg flex items-center justify-center text-xs font-bold text-muted hover:border-white/30 hover:text-white transition-colors duration-200">in</a>
+            <a href="#" class="w-8 h-8 border border-white/10 rounded-lg flex items-center justify-center text-xs font-bold text-muted hover:border-white/30 hover:text-white transition-colors duration-200">𝕏</a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-8">
+          <div>
+            <p class="text-xs font-bold tracking-wide-2 uppercase text-white mb-4">Startup</p>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">Launch Page</a></li>
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">Waitlist Site</a></li>
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">MVP Web App</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-xs font-bold tracking-wide-2 uppercase text-white mb-4">Industrial</p>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">Credibility Site</a></li>
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">Product Catalog</a></li>
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">B2B Lead Gen</a></li>
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">Legacy Overhaul</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-xs font-bold tracking-wide-2 uppercase text-white mb-4">Company</p>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-xs text-muted hover:text-white transition-colors duration-200">About</a></li>
+              <li><a href="#results" class="text-xs text-muted hover:text-white transition-colors duration-200">Results</a></li>
+              <li><a href="#contact" class="text-xs text-muted hover:text-white transition-colors duration-200">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-muted">© 2026 LaunchRwanda. All rights reserved.</p>
+        <p class="text-xs text-muted">Privacy · Terms</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    // ── NAV scroll ──
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ── Mobile menu ──
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    burger.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden') === false;
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      document.body.style.overflow = '';
+    }));
+
+    // ── TOGGLE ──
+    const toggle  = document.getElementById('mainToggle');
+    const pill    = document.getElementById('togglePill');
+    const tabInd  = document.getElementById('tab-ind');
+    const tabSta  = document.getElementById('tab-sta');
+    const panelInd = document.getElementById('panel-ind');
+    const panelSta = document.getElementById('panel-sta');
+    let currentMode = 'startup';
+
+    function positionPill(btn) {
+      const wRect = toggle.getBoundingClientRect();
+      const bRect = btn.getBoundingClientRect();
+      pill.style.width = bRect.width + 'px';
+      pill.style.transform = `translateX(${bRect.left - wRect.left - 6}px)`;
+    }
+
+    function switchMode(mode) {
+      if (mode === currentMode) return;
+      currentMode = mode;
+      const isInd = mode === 'industrial';
+
+      tabInd.classList.toggle('text-orange', isInd);
+      tabInd.classList.toggle('text-white/40', !isInd);
+      tabSta.classList.toggle('text-purple', !isInd);
+      tabSta.classList.toggle('text-white/40', isInd);
+
+      pill.className = isInd
+        ? 'toggle-pill absolute top-1.5 left-1.5 h-[calc(100%-12px)] rounded-full bg-orange/15 border border-orange/30'
+        : 'toggle-pill absolute top-1.5 left-1.5 h-[calc(100%-12px)] rounded-full bg-purple/15 border border-purple/30';
+      positionPill(isInd ? tabInd : tabSta);
+
+      const from = isInd ? panelSta : panelInd;
+      const to   = isInd ? panelInd : panelSta;
+      from.classList.add('hidden');
+      to.classList.remove('hidden');
+      void to.offsetWidth;
+      to.classList.add('entering');
+      setTimeout(() => to.classList.remove('entering'), 400);
+
+      to.querySelectorAll('.reveal:not(.visible)').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 60);
+      });
+    }
+
+    toggle.querySelectorAll('[data-target]').forEach(btn => {
+      btn.addEventListener('click', () => switchMode(btn.dataset.target));
+    });
+
+    window.addEventListener('load', () => positionPill(tabSta));
+    window.addEventListener('resize', () => positionPill(currentMode === 'startup' ? tabSta : tabInd));
+
+    // ── SCROLL REVEAL ──
+    // Pre-reveal cards in the active (startup) panel so they show on load
+    document.querySelectorAll('#panel-sta .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 200 + i * 60);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 70);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -20px 0px' });
+
+    // Only observe elements outside the initial panel
+    document.querySelectorAll('.reveal:not(#panel-sta .reveal)').forEach(el => observer.observe(el));
+
+    // ── CONTACT FORM ──
+    document.getElementById('contactForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = '✓ Sent — we\'ll be in touch!';
+        btn.style.background = '#10b981';
+        e.target.reset();
+        setTimeout(() => {
+          btn.textContent = 'Send My Request →';
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 4000);
+      }, 1200);
+    });
+
+    // ── SMOOTH SCROLL ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+  </script>
+</body>
+</html>
