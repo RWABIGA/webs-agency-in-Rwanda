@@ -75,6 +75,12 @@ function switchMode(mode) {
     el.classList.remove('reveal', 'visible');
     revealObserver.observe(el);
   });
+
+  // Re-observe service cards luminosity in the new panel
+  toPanel.querySelectorAll('.svc-service-card').forEach(card => {
+    card.classList.remove('svc-lit');
+    svcLitObserver.observe(card);
+  });
 }
 
 // Init pill position after layout
@@ -118,6 +124,32 @@ document.querySelectorAll(
 ).forEach(el => {
   el.classList.add('reveal');
   revealObserver.observe(el);
+});
+
+/* ============================================================
+   SERVICE CARDS — scroll luminosity + click
+============================================================ */
+const svcLitObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('svc-lit');
+    } else {
+      entry.target.classList.remove('svc-lit');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px 0px 0px' });
+
+document.querySelectorAll('.svc-service-card').forEach(card => {
+  svcLitObserver.observe(card);
+  card.addEventListener('click', () => {
+    const service  = card.dataset.service  || card.querySelector('h3')?.textContent.trim();
+    const mode     = card.dataset.mode     || '';
+    const delivery = card.dataset.delivery || '';
+    // Dispatch custom event — backend modal will listen to this
+    document.dispatchEvent(new CustomEvent('serviceSelected', {
+      detail: { service, mode, delivery }
+    }));
+  });
 });
 
 /* ============================================================
