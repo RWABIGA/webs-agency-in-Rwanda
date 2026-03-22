@@ -222,6 +222,106 @@
     .btn-primary:hover { transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
 
+    /* ═══ MODALS ═══ */
+    .lr-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(18px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .lr-overlay.open { opacity: 1; pointer-events: all; }
+    .lr-modal {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 24px;
+      width: 100%; max-width: 540px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(22px) scale(0.98);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      scrollbar-width: none;
+    }
+    .lr-modal::-webkit-scrollbar { display: none; }
+    .lr-overlay.open .lr-modal { transform: none; }
+    .lr-modal-inner { padding: 40px; }
+
+    /* Choice modal (small) */
+    .lr-modal--choice { max-width: 380px; }
+    .lr-choice-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 18px 20px;
+      background: #141414;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.25s, background 0.25s, transform 0.2s;
+      display: flex; align-items: center; gap-14px;
+    }
+    .lr-choice-btn:hover { transform: translateY(-2px); }
+    .lr-choice-btn--launch:hover { border-color: rgba(232,104,60,0.5); background: rgba(232,104,60,0.06); }
+    .lr-choice-btn--register:hover { border-color: rgba(155,127,244,0.5); background: rgba(155,127,244,0.06); }
+
+    /* Form inputs */
+    .lr-input {
+      width: 100%; background: #141414;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px; padding: 13px 16px;
+      color: #fff; font-size: 14px; font-family: inherit;
+      outline: none; transition: border-color 0.2s;
+    }
+    .lr-input:focus { border-color: rgba(232,104,60,0.55); }
+    .lr-input::placeholder { color: rgba(255,255,255,0.22); }
+    select.lr-input { color: rgba(255,255,255,0.7); }
+    textarea.lr-input { resize: none; }
+    .lr-label {
+      display: block; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #6b6b6b; margin-bottom: 7px;
+    }
+    .lr-field { display: flex; flex-direction: column; }
+    .lr-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 500px) { .lr-grid-2 { grid-template-columns: 1fr; } }
+
+    /* Service tag shown in modal header */
+    .lr-service-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 5px 12px;
+      border-radius: 999px; margin-bottom: 20px;
+    }
+    .lr-service-tag--ind { background: rgba(232,104,60,0.12); color: #e8683c; border: 1px solid rgba(232,104,60,0.25); }
+    .lr-service-tag--sta { background: rgba(155,127,244,0.12); color: #9b7ff4; border: 1px solid rgba(155,127,244,0.25); }
+    .lr-service-tag--none { background: rgba(255,255,255,0.06); color: #999; border: 1px solid rgba(255,255,255,0.1); }
+
+    /* Submit btn */
+    .lr-submit {
+      width: 100%; padding: 14px;
+      border-radius: 999px; border: none;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .lr-submit:hover { transform: translateY(-1px); }
+    .lr-submit--orange { background: #e8683c; color: #fff; }
+    .lr-submit--orange:hover { box-shadow: 0 4px 32px rgba(232,104,60,0.4); }
+    .lr-submit--purple { background: #9b7ff4; color: #fff; }
+    .lr-submit--purple:hover { box-shadow: 0 4px 32px rgba(155,127,244,0.4); }
+
+    /* Close button */
+    .lr-close {
+      position: absolute; top: 20px; right: 20px;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.09);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: #999; font-size: 16px; transition: background 0.2s;
+    }
+    .lr-close:hover { background: rgba(255,255,255,0.12); }
+
+    /* Success state */
+    .lr-success { text-align: center; padding: 60px 40px; }
+
     /* --- SCROLLBAR --- */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0d0d0d; }
@@ -417,16 +517,16 @@
 
           <!-- CTAs -->
           <div class="flex items-center gap-4 flex-wrap mb-14">
-            <a href="#solutions" class="btn-primary bg-ink text-cream font-semibold text-sm px-7 py-3.5 rounded-full hover:shadow-card-light">
-              See Our Solutions →
-            </a>
-            <a href="#results" class="text-sm font-medium text-muted underline underline-offset-4 hover:text-ink transition-colors duration-200">
-              View Results
-            </a>
+            <button onclick="openProjectModal(null)" class="btn-primary bg-ink text-cream font-semibold text-sm px-7 py-3.5 rounded-full hover:shadow-card-light">
+              Launch My Project →
+            </button>
+            <button onclick="openRegisterModal(null)" class="text-sm font-medium text-muted underline underline-offset-4 hover:text-ink transition-colors duration-200">
+              Register with Winners
+            </button>
           </div>
 
           <!-- Niche pills -->
-          <div class="flex items-center gap-4 flex-wrap">
+          <div class="flex items-center justify-center gap-4 flex-wrap">
             <div class="flex items-center gap-3 border-2 border-purple/60 bg-purple/10 px-6 py-3.5 rounded-2xl cursor-default">
               <span class="w-3 h-3 rounded-full bg-purple" style="box-shadow:0 0 8px rgba(155,127,244,0.7);animation:pillPulse 2s ease-in-out infinite;"></span>
               <span class="font-black uppercase text-purple" style="font-size:0.88rem;letter-spacing:0.12em;">Startups</span>
@@ -1081,6 +1181,159 @@
 
     </div>
   </section>
+
+  <!-- ============================================================
+       MODAL — Service choice popup
+  ============================================================ -->
+  <div id="modal-choice" class="lr-overlay" role="dialog" aria-modal="true">
+    <div class="lr-modal lr-modal--choice" style="position:relative;">
+      <button class="lr-close" onclick="closeModal('modal-choice')" aria-label="Close">✕</button>
+      <div class="lr-modal-inner">
+        <p id="choice-service-tag" class="lr-service-tag lr-service-tag--none">Select a path</p>
+        <h3 class="text-white font-display font-bold text-xl mb-2 tracking-tight" id="choice-title">How would you like to proceed?</h3>
+        <p class="text-muted-light text-xs leading-relaxed mb-8" id="choice-sub">Choose how you want to get started with this service.</p>
+
+        <div class="flex flex-col gap-3">
+          <button class="lr-choice-btn lr-choice-btn--launch" onclick="fromChoice('launch')">
+            <div>
+              <div class="text-white font-semibold text-sm mb-1">🚀 Launch My Project</div>
+              <div class="text-muted-light text-xs leading-relaxed">Fill in your project details and our team contacts you within 2 hours.</div>
+            </div>
+          </button>
+          <button class="lr-choice-btn lr-choice-btn--register" onclick="fromChoice('register')">
+            <div>
+              <div class="text-white font-semibold text-sm mb-1">🏆 Register with Winners</div>
+              <div class="text-xs text-muted-light leading-relaxed">Create your account first to get member pricing, then fill your project brief.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — Project template
+  ============================================================ -->
+  <div id="modal-project" class="lr-overlay" role="dialog" aria-modal="true">
+    <div class="lr-modal" style="position:relative;">
+      <button class="lr-close" onclick="closeModal('modal-project')" aria-label="Close">✕</button>
+      <div id="modal-project-content">
+        <div class="lr-modal-inner">
+          <p id="project-service-tag" class="lr-service-tag lr-service-tag--none">General Inquiry</p>
+          <h3 class="text-white font-display font-bold text-2xl mb-2 tracking-tight">Launch My Project</h3>
+          <p class="text-muted-light text-xs leading-relaxed mb-8">Fill in the details below — our team will call you within 2 hours.</p>
+
+          <form id="project-form" novalidate>
+            <div class="flex flex-col gap-5">
+
+              <div class="lr-grid-2">
+                <div class="lr-field">
+                  <label class="lr-label">Full Name *</label>
+                  <input id="pf-name" type="text" class="lr-input" placeholder="Jean-Pierre Nkurunziza" required />
+                </div>
+                <div class="lr-field">
+                  <label class="lr-label">Phone Number *</label>
+                  <input id="pf-phone" type="tel" class="lr-input" placeholder="+250 7XX XXX XXX" required />
+                </div>
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Email Address *</label>
+                <input id="pf-email" type="email" class="lr-input" placeholder="you@company.com" required />
+              </div>
+
+              <div class="lr-grid-2">
+                <div class="lr-field">
+                  <label class="lr-label">Company Name *</label>
+                  <input id="pf-company" type="text" class="lr-input" placeholder="Acme Rwanda Ltd." required />
+                </div>
+                <div class="lr-field">
+                  <label class="lr-label">Your Position *</label>
+                  <input id="pf-position" type="text" class="lr-input" placeholder="CEO / Founder / Director" required />
+                </div>
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Company Description</label>
+                <textarea id="pf-description" class="lr-input" rows="2" placeholder="What does your company do? Who are your clients?"></textarea>
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Budget Available for This Project *</label>
+                <select id="pf-budget" class="lr-input" required>
+                  <option value="">Select your budget range</option>
+                  <option>Under $500</option>
+                  <option>$500 – $1,500</option>
+                  <option>$1,500 – $5,000</option>
+                  <option>$5,000 – $15,000</option>
+                  <option>$15,000+</option>
+                  <option>Let's discuss</option>
+                </select>
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Anything else you'd like us to know?</label>
+                <textarea id="pf-notes" class="lr-input" rows="2" placeholder="Timeline, special requirements, references…"></textarea>
+              </div>
+
+              <button type="submit" class="lr-submit lr-submit--orange mt-2">Send My Project Brief →</button>
+              <p class="text-center text-xs text-muted">We reply within 2 hours · No commitment required</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — Register (create account → continue to project)
+  ============================================================ -->
+  <div id="modal-register" class="lr-overlay" role="dialog" aria-modal="true">
+    <div class="lr-modal" style="position:relative;">
+      <button class="lr-close" onclick="closeModal('modal-register')" aria-label="Close">✕</button>
+      <div id="modal-register-content">
+        <div class="lr-modal-inner">
+          <p id="register-service-tag" class="lr-service-tag lr-service-tag--none">Winners Program</p>
+          <h3 class="text-white font-display font-bold text-2xl mb-2 tracking-tight">Create Your Account</h3>
+          <p class="text-muted-light text-xs leading-relaxed mb-8">Members get priority response, member pricing, and a dedicated project manager. Takes 30 seconds.</p>
+
+          <form id="register-form" novalidate>
+            <div class="flex flex-col gap-5">
+
+              <div class="lr-grid-2">
+                <div class="lr-field">
+                  <label class="lr-label">Full Name *</label>
+                  <input id="rf-name" type="text" class="lr-input" placeholder="Jean-Pierre Nkurunziza" required />
+                </div>
+                <div class="lr-field">
+                  <label class="lr-label">Phone Number *</label>
+                  <input id="rf-phone" type="tel" class="lr-input" placeholder="+250 7XX XXX XXX" required />
+                </div>
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Email Address *</label>
+                <input id="rf-email" type="email" class="lr-input" placeholder="you@company.com" required />
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Company Name *</label>
+                <input id="rf-company" type="text" class="lr-input" placeholder="Acme Rwanda Ltd." required />
+              </div>
+
+              <div class="lr-field">
+                <label class="lr-label">Password *</label>
+                <input id="rf-password" type="password" class="lr-input" placeholder="Choose a strong password" required />
+              </div>
+
+              <button type="submit" class="lr-submit lr-submit--purple mt-2">Create Account &amp; Continue →</button>
+              <p class="text-center text-xs text-muted">Already a member? <span class="text-purple cursor-pointer underline" onclick="openProjectModal(null)">Go straight to the brief →</span></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================================
        FOOTER

@@ -174,6 +174,148 @@ document.getElementById('contactForm').addEventListener('submit', (e) => {
 });
 
 /* ============================================================
+   MODAL SYSTEM
+============================================================ */
+let _activeService = null; // { service, mode, delivery }
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (!document.querySelector('.lr-overlay.open')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function closeAllModals() {
+  document.querySelectorAll('.lr-overlay').forEach(m => m.classList.remove('open'));
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.querySelectorAll('.lr-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeModal(overlay.id);
+  });
+});
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAllModals();
+});
+
+// ── Helpers to set the service tag in modals ──
+function setServiceTag(tagEl, svc) {
+  if (!svc) { tagEl.textContent = 'General Inquiry'; tagEl.className = 'lr-service-tag lr-service-tag--none'; return; }
+  const cls = svc.mode === 'industrial' ? 'lr-service-tag--ind' : 'lr-service-tag--sta';
+  tagEl.className = `lr-service-tag ${cls}`;
+  tagEl.textContent = svc.service + (svc.delivery ? '  ·  Live in ' + svc.delivery : '');
+}
+
+// ── Open project template directly ──
+function openProjectModal(svc) {
+  _activeService = svc;
+  const tag = document.getElementById('project-service-tag');
+  setServiceTag(tag, svc);
+  // Reset form & success state
+  document.getElementById('project-form').style.display = '';
+  document.getElementById('project-form').reset();
+  const succ = document.getElementById('project-success');
+  if (succ) succ.remove();
+  openModal('modal-project');
+}
+
+// ── Open register modal ──
+function openRegisterModal(svc) {
+  _activeService = svc;
+  const tag = document.getElementById('register-service-tag');
+  setServiceTag(tag, svc);
+  document.getElementById('register-form').reset();
+  openModal('modal-register');
+}
+
+// ── Open choice popup (from service card click) ──
+function openChoiceModal(svc) {
+  _activeService = svc;
+  const tag    = document.getElementById('choice-service-tag');
+  const title  = document.getElementById('choice-title');
+  const sub    = document.getElementById('choice-sub');
+  setServiceTag(tag, svc);
+  if (svc) {
+    title.textContent = svc.service;
+    sub.textContent   = 'How would you like to get started with this service?';
+  } else {
+    title.textContent = 'How would you like to proceed?';
+    sub.textContent   = 'Choose how you want to get started.';
+  }
+  openModal('modal-choice');
+}
+
+// Choice buttons inside choice modal
+function fromChoice(path) {
+  closeModal('modal-choice');
+  setTimeout(() => {
+    if (path === 'launch') openProjectModal(_activeService);
+    else openRegisterModal(_activeService);
+  }, 180);
+}
+
+// ── Service card clicks → choice popup ──
+document.addEventListener('serviceSelected', e => {
+  openChoiceModal(e.detail);
+});
+
+// ── Project form submit ──
+document.getElementById('project-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.lr-submit');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const inner = document.getElementById('modal-project-content');
+    inner.innerHTML = `
+      <div class="lr-success">
+        <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
+        <h3 class="text-white font-display font-bold text-xl mb-3">Project Brief Received!</h3>
+        <p class="text-muted-light text-sm leading-relaxed mb-6">Our team will call you within <strong class="text-orange">2 hours</strong> to discuss your project and next steps.</p>
+        <button onclick="closeModal('modal-project')" class="lr-submit lr-submit--orange" style="max-width:200px;margin:0 auto;">
+          Close
+        </button>
+      </div>`;
+  }, 1200);
+});
+
+// ── Register form submit → continues to project template ──
+document.getElementById('register-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.lr-submit');
+  btn.textContent = 'Creating account…';
+  btn.disabled = true;
+
+  // Grab name & email to pre-fill project form
+  const name  = document.getElementById('rf-name').value;
+  const email = document.getElementById('rf-email').value;
+  const phone = document.getElementById('rf-phone').value;
+  const company = document.getElementById('rf-company').value;
+
+  setTimeout(() => {
+    closeModal('modal-register');
+    setTimeout(() => {
+      openProjectModal(_activeService);
+      // Pre-fill shared fields
+      document.getElementById('pf-name').value    = name;
+      document.getElementById('pf-email').value   = email;
+      document.getElementById('pf-phone').value   = phone;
+      document.getElementById('pf-company').value = company;
+    }, 200);
+  }, 1000);
+});
+
+/* ============================================================
    SMOOTH SCROLL (anchors)
 ============================================================ */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
