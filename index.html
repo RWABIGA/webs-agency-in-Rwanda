@@ -319,6 +319,22 @@
     }
     .lr-close:hover { background: rgba(255,255,255,0.12); }
 
+    /* Service checkboxes */
+    .lr-checkbox-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #141414; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .lr-checkbox-item:hover { border-color: rgba(255,255,255,0.18); }
+    .lr-checkbox-item input[type="checkbox"] { accent-color: #e8683c; width: 15px; height: 15px; cursor: pointer; }
+    .lr-checkbox-item.checked-ind { border-color: rgba(232,104,60,0.45); background: rgba(232,104,60,0.07); }
+    .lr-checkbox-item.checked-sta { border-color: rgba(155,127,244,0.45); background: rgba(155,127,244,0.07); }
+    .lr-checkbox-item input[type="checkbox"].sta { accent-color: #9b7ff4; }
+    .lr-checkbox-label { font-size: 13px; color: #e8e5de; }
+
     /* Success state */
     .lr-success { text-align: center; padding: 60px 40px; }
 
@@ -1219,13 +1235,14 @@
       <button class="lr-close" onclick="closeModal('modal-project')" aria-label="Close">✕</button>
       <div id="modal-project-content">
         <div class="lr-modal-inner">
-          <p id="project-service-tag" class="lr-service-tag lr-service-tag--none">General Inquiry</p>
-          <h3 class="text-white font-display font-bold text-2xl mb-2 tracking-tight">Launch My Project</h3>
-          <p class="text-muted-light text-xs leading-relaxed mb-8">Fill in the details below — our team will call you within 2 hours.</p>
+          <p id="project-service-tag" class="lr-service-tag lr-service-tag--none">Project Brief</p>
+          <h3 class="text-white font-display font-bold text-2xl mb-1 tracking-tight">Launch My Project</h3>
+          <p class="text-muted-light text-xs leading-relaxed mb-8">Tell us about your project — our team will call you within 2 hours.</p>
 
           <form id="project-form" novalidate>
             <div class="flex flex-col gap-5">
 
+              <!-- 1 & 2: Name + Phone -->
               <div class="lr-grid-2">
                 <div class="lr-field">
                   <label class="lr-label">Full Name *</label>
@@ -1237,11 +1254,13 @@
                 </div>
               </div>
 
+              <!-- 3: Email -->
               <div class="lr-field">
                 <label class="lr-label">Email Address *</label>
                 <input id="pf-email" type="email" class="lr-input" placeholder="you@company.com" required />
               </div>
 
+              <!-- 4 & 6: Company + Position -->
               <div class="lr-grid-2">
                 <div class="lr-field">
                   <label class="lr-label">Company Name *</label>
@@ -1253,13 +1272,38 @@
                 </div>
               </div>
 
+              <!-- 5: Company description -->
               <div class="lr-field">
-                <label class="lr-label">Company Description</label>
-                <textarea id="pf-description" class="lr-input" rows="2" placeholder="What does your company do? Who are your clients?"></textarea>
+                <label class="lr-label">Company Description *</label>
+                <textarea id="pf-description" class="lr-input" rows="2" placeholder="What does your company do? Who are your clients?" required></textarea>
               </div>
 
+              <!-- 7: Industry -->
               <div class="lr-field">
-                <label class="lr-label">Budget Available for This Project *</label>
+                <label class="lr-label">Your Industry *</label>
+                <select id="pf-industry" class="lr-input" required onchange="onIndustryChange(this.value)">
+                  <option value="">Select your industry</option>
+                  <option value="startup">Startup / Scale-up</option>
+                  <option value="industrial">Industrial / Manufacturing Company</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- 8: Services (dynamic) -->
+              <div class="lr-field" id="pf-services-wrap" style="display:none;">
+                <label class="lr-label">Services You Need *</label>
+                <div id="pf-services-list" class="flex flex-col gap-2 mt-1"></div>
+              </div>
+
+              <!-- 8b: Other industry text -->
+              <div class="lr-field" id="pf-other-wrap" style="display:none;">
+                <label class="lr-label">Please describe what you need *</label>
+                <textarea id="pf-other-desc" class="lr-input" rows="2" placeholder="Describe your industry and the kind of website or digital service you're looking for…"></textarea>
+              </div>
+
+              <!-- 9: Budget -->
+              <div class="lr-field">
+                <label class="lr-label">Budget Available *</label>
                 <select id="pf-budget" class="lr-input" required>
                   <option value="">Select your budget range</option>
                   <option>Under $500</option>
@@ -1271,12 +1315,13 @@
                 </select>
               </div>
 
+              <!-- 10: Notes -->
               <div class="lr-field">
-                <label class="lr-label">Anything else you'd like us to know?</label>
-                <textarea id="pf-notes" class="lr-input" rows="2" placeholder="Timeline, special requirements, references…"></textarea>
+                <label class="lr-label">Anything else? (timeline, references…)</label>
+                <textarea id="pf-notes" class="lr-input" rows="2" placeholder="Deadline, inspiration sites, special requirements…"></textarea>
               </div>
 
-              <button type="submit" class="lr-submit lr-submit--orange mt-2">Send My Project Brief →</button>
+              <button type="submit" id="pf-submit" class="lr-submit lr-submit--orange mt-2">Send My Project Brief →</button>
               <p class="text-center text-xs text-muted">We reply within 2 hours · No commitment required</p>
             </div>
           </form>
@@ -1286,51 +1331,125 @@
   </div>
 
   <!-- ============================================================
-       MODAL — Register (create account → continue to project)
+       MODAL — Register (step 1: account · step 2: project brief)
   ============================================================ -->
   <div id="modal-register" class="lr-overlay" role="dialog" aria-modal="true">
     <div class="lr-modal" style="position:relative;">
       <button class="lr-close" onclick="closeModal('modal-register')" aria-label="Close">✕</button>
       <div id="modal-register-content">
-        <div class="lr-modal-inner">
-          <p id="register-service-tag" class="lr-service-tag lr-service-tag--none">Winners Program</p>
-          <h3 class="text-white font-display font-bold text-2xl mb-2 tracking-tight">Create Your Account</h3>
-          <p class="text-muted-light text-xs leading-relaxed mb-8">Members get priority response, member pricing, and a dedicated project manager. Takes 30 seconds.</p>
 
-          <form id="register-form" novalidate>
-            <div class="flex flex-col gap-5">
-
-              <div class="lr-grid-2">
-                <div class="lr-field">
-                  <label class="lr-label">Full Name *</label>
-                  <input id="rf-name" type="text" class="lr-input" placeholder="Jean-Pierre Nkurunziza" required />
-                </div>
-                <div class="lr-field">
-                  <label class="lr-label">Phone Number *</label>
-                  <input id="rf-phone" type="tel" class="lr-input" placeholder="+250 7XX XXX XXX" required />
-                </div>
-              </div>
-
-              <div class="lr-field">
-                <label class="lr-label">Email Address *</label>
-                <input id="rf-email" type="email" class="lr-input" placeholder="you@company.com" required />
-              </div>
-
-              <div class="lr-field">
-                <label class="lr-label">Company Name *</label>
-                <input id="rf-company" type="text" class="lr-input" placeholder="Acme Rwanda Ltd." required />
-              </div>
-
-              <div class="lr-field">
-                <label class="lr-label">Password *</label>
-                <input id="rf-password" type="password" class="lr-input" placeholder="Choose a strong password" required />
-              </div>
-
-              <button type="submit" class="lr-submit lr-submit--purple mt-2">Create Account &amp; Continue →</button>
-              <p class="text-center text-xs text-muted">Already a member? <span class="text-purple cursor-pointer underline" onclick="openProjectModal(null)">Go straight to the brief →</span></p>
+        <!-- STEP 1: Create account -->
+        <div id="register-step1">
+          <div class="lr-modal-inner">
+            <p id="register-service-tag" class="lr-service-tag lr-service-tag--none">Winners Program</p>
+            <h3 class="text-white font-display font-bold text-2xl mb-1 tracking-tight">Create Your Account</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-2">Members get priority response and member pricing.</p>
+            <div class="flex items-center gap-6 mb-8">
+              <span class="text-xs font-bold text-purple">Step 1 of 2 — Account</span>
+              <div class="flex-1 h-px bg-white/10 relative"><div class="absolute inset-y-0 left-0 bg-purple rounded-full" style="width:50%"></div></div>
             </div>
-          </form>
+
+            <form id="register-form" novalidate>
+              <div class="flex flex-col gap-5">
+                <div class="lr-grid-2">
+                  <div class="lr-field">
+                    <label class="lr-label">Full Name *</label>
+                    <input id="rf-name" type="text" class="lr-input" placeholder="Jean-Pierre Nkurunziza" required />
+                  </div>
+                  <div class="lr-field">
+                    <label class="lr-label">Phone Number *</label>
+                    <input id="rf-phone" type="tel" class="lr-input" placeholder="+250 7XX XXX XXX" required />
+                  </div>
+                </div>
+                <div class="lr-field">
+                  <label class="lr-label">Email Address *</label>
+                  <input id="rf-email" type="email" class="lr-input" placeholder="you@company.com" required />
+                </div>
+                <div class="lr-field">
+                  <label class="lr-label">Company Name *</label>
+                  <input id="rf-company" type="text" class="lr-input" placeholder="Acme Rwanda Ltd." required />
+                </div>
+                <div class="lr-field">
+                  <label class="lr-label">Create a Password *</label>
+                  <input id="rf-password" type="password" class="lr-input" placeholder="Min. 8 characters" required />
+                </div>
+                <button type="submit" class="lr-submit lr-submit--purple mt-2">Continue to Project Brief →</button>
+                <p class="text-center text-xs text-muted">Already a member? <span class="text-purple cursor-pointer underline" onclick="closeModal('modal-register');openProjectModal(_activeService)">Go straight to the brief →</span></p>
+              </div>
+            </form>
+          </div>
         </div>
+
+        <!-- STEP 2: Project brief (same template, injected after registration) -->
+        <div id="register-step2" style="display:none;">
+          <div class="lr-modal-inner">
+            <p id="register2-service-tag" class="lr-service-tag lr-service-tag--none">Project Brief</p>
+            <h3 class="text-white font-display font-bold text-2xl mb-1 tracking-tight">Now, Tell Us About Your Project</h3>
+            <p class="text-muted-light text-xs leading-relaxed mb-2">Account created! Complete your project brief below.</p>
+            <div class="flex items-center gap-6 mb-8">
+              <span class="text-xs font-bold text-purple">Step 2 of 2 — Project</span>
+              <div class="flex-1 h-px bg-white/10 relative"><div class="absolute inset-y-0 left-0 bg-purple rounded-full" style="width:100%"></div></div>
+            </div>
+
+            <form id="register-brief-form" novalidate>
+              <div class="flex flex-col gap-5">
+
+                <div class="lr-grid-2">
+                  <div class="lr-field">
+                    <label class="lr-label">Your Position *</label>
+                    <input id="rb-position" type="text" class="lr-input" placeholder="CEO / Founder / Director" required />
+                  </div>
+                  <div class="lr-field">
+                    <label class="lr-label">Budget Available *</label>
+                    <select id="rb-budget" class="lr-input" required>
+                      <option value="">Select range</option>
+                      <option>Under $500</option>
+                      <option>$500 – $1,500</option>
+                      <option>$1,500 – $5,000</option>
+                      <option>$5,000 – $15,000</option>
+                      <option>$15,000+</option>
+                      <option>Let's discuss</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="lr-field">
+                  <label class="lr-label">Company Description *</label>
+                  <textarea id="rb-description" class="lr-input" rows="2" placeholder="What does your company do? Who are your clients?" required></textarea>
+                </div>
+
+                <div class="lr-field">
+                  <label class="lr-label">Your Industry *</label>
+                  <select id="rb-industry" class="lr-input" required onchange="onIndustryChangeReg(this.value)">
+                    <option value="">Select your industry</option>
+                    <option value="startup">Startup / Scale-up</option>
+                    <option value="industrial">Industrial / Manufacturing Company</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="lr-field" id="rb-services-wrap" style="display:none;">
+                  <label class="lr-label">Services You Need *</label>
+                  <div id="rb-services-list" class="flex flex-col gap-2 mt-1"></div>
+                </div>
+
+                <div class="lr-field" id="rb-other-wrap" style="display:none;">
+                  <label class="lr-label">Describe What You Need *</label>
+                  <textarea id="rb-other-desc" class="lr-input" rows="2" placeholder="Describe your industry and the kind of service you're looking for…"></textarea>
+                </div>
+
+                <div class="lr-field">
+                  <label class="lr-label">Anything else? (timeline, references…)</label>
+                  <textarea id="rb-notes" class="lr-input" rows="2" placeholder="Deadline, inspiration sites, special requirements…"></textarea>
+                </div>
+
+                <button type="submit" class="lr-submit lr-submit--purple mt-2">Send My Project Brief →</button>
+                <p class="text-center text-xs text-muted">We reply within 2 hours · No commitment required</p>
+              </div>
+            </form>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

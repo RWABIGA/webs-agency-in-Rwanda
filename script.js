@@ -178,17 +178,32 @@ document.getElementById('contactForm').addEventListener('submit', (e) => {
 ============================================================ */
 let _activeService = null; // { service, mode, delivery }
 
+const SERVICES = {
+  startup: [
+    'Launch Landing Page',
+    'Waitlist & Pre-launch Site',
+    'MVP Web App',
+    'SaaS Marketing Site',
+    'Growth & SEO Marketing',
+  ],
+  industrial: [
+    'Digital Credibility Site',
+    'Product & Equipment Catalog',
+    'B2B Lead Generation',
+    'Certifications Showcase',
+    'Legacy Site Overhaul',
+    'Industrial SEO & Marketing',
+  ],
+};
+
 function openModal(id) {
-  const el = document.getElementById(id);
-  el.classList.add('open');
+  document.getElementById(id).classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
-  if (!document.querySelector('.lr-overlay.open')) {
-    document.body.style.overflow = '';
-  }
+  if (!document.querySelector('.lr-overlay.open')) document.body.style.overflow = '';
 }
 
 function closeAllModals() {
@@ -196,54 +211,115 @@ function closeAllModals() {
   document.body.style.overflow = '';
 }
 
-// Close on backdrop click
 document.querySelectorAll('.lr-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) closeModal(overlay.id);
-  });
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
 });
-// Close on Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeAllModals();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllModals(); });
 
-// ── Helpers to set the service tag in modals ──
+// ── Service tag helper ──
 function setServiceTag(tagEl, svc) {
-  if (!svc) { tagEl.textContent = 'General Inquiry'; tagEl.className = 'lr-service-tag lr-service-tag--none'; return; }
+  if (!svc) { tagEl.textContent = 'Project Brief'; tagEl.className = 'lr-service-tag lr-service-tag--none'; return; }
   const cls = svc.mode === 'industrial' ? 'lr-service-tag--ind' : 'lr-service-tag--sta';
   tagEl.className = `lr-service-tag ${cls}`;
-  tagEl.textContent = svc.service + (svc.delivery ? '  ·  Live in ' + svc.delivery : '');
+  tagEl.textContent = svc.service + (svc.delivery ? ' · Live in ' + svc.delivery : '');
+}
+
+// ── Build service checkboxes ──
+function buildServiceList(containerId, industry, preSelected) {
+  const wrap = containerId === 'pf-services-list'
+    ? document.getElementById('pf-services-wrap')
+    : document.getElementById('rb-services-wrap');
+  const list = document.getElementById(containerId);
+
+  if (!industry || industry === 'other') { wrap.style.display = 'none'; list.innerHTML = ''; return; }
+
+  const items = SERVICES[industry] || [];
+  const accentCls = industry === 'industrial' ? 'checked-ind' : 'checked-sta';
+  const cbCls     = industry === 'startup'    ? 'sta'         : '';
+
+  list.innerHTML = items.map(svc => {
+    const checked = preSelected === svc ? 'checked' : '';
+    return `<label class="lr-checkbox-item${checked ? ' ' + accentCls : ''}">
+      <input type="checkbox" class="${cbCls}" value="${svc}" ${checked}
+        onchange="this.closest('label').className='lr-checkbox-item'+(this.checked?' ${accentCls}':'')">
+      <span class="lr-checkbox-label">${svc}</span>
+    </label>`;
+  }).join('') +
+  `<label class="lr-checkbox-item">
+    <input type="checkbox" class="${cbCls}" value="Other">
+    <span class="lr-checkbox-label">Other / Not sure yet</span>
+  </label>`;
+
+  wrap.style.display = '';
+}
+
+// ── Industry change handlers ──
+function onIndustryChange(val) {
+  const svcWrap   = document.getElementById('pf-services-wrap');
+  const otherWrap = document.getElementById('pf-other-wrap');
+  if (val === 'other') {
+    svcWrap.style.display   = 'none';
+    otherWrap.style.display = '';
+    document.getElementById('pf-services-list').innerHTML = '';
+  } else {
+    otherWrap.style.display = 'none';
+    buildServiceList('pf-services-list', val, _activeService?.service);
+  }
+}
+
+function onIndustryChangeReg(val) {
+  const svcWrap   = document.getElementById('rb-services-wrap');
+  const otherWrap = document.getElementById('rb-other-wrap');
+  if (val === 'other') {
+    svcWrap.style.display   = 'none';
+    otherWrap.style.display = '';
+    document.getElementById('rb-services-list').innerHTML = '';
+  } else {
+    otherWrap.style.display = 'none';
+    buildServiceList('rb-services-list', val, _activeService?.service);
+  }
 }
 
 // ── Open project template directly ──
 function openProjectModal(svc) {
   _activeService = svc;
-  const tag = document.getElementById('project-service-tag');
-  setServiceTag(tag, svc);
-  // Reset form & success state
-  document.getElementById('project-form').style.display = '';
+  setServiceTag(document.getElementById('project-service-tag'), svc);
+  // Reset
   document.getElementById('project-form').reset();
-  const succ = document.getElementById('project-success');
-  if (succ) succ.remove();
+  document.getElementById('pf-services-wrap').style.display  = 'none';
+  document.getElementById('pf-other-wrap').style.display     = 'none';
+  document.getElementById('pf-services-list').innerHTML      = '';
+  document.getElementById('pf-submit').textContent           = 'Send My Project Brief →';
+  document.getElementById('pf-submit').disabled              = false;
+  // Restore form if it was replaced by success screen
+  if (!document.getElementById('project-form').isConnected) {
+    location.reload(); return; // fallback
+  }
+  // Pre-select industry if coming from a service card
+  if (svc?.mode) {
+    const sel = document.getElementById('pf-industry');
+    sel.value = svc.mode;
+    onIndustryChange(svc.mode);
+  }
   openModal('modal-project');
 }
 
 // ── Open register modal ──
 function openRegisterModal(svc) {
   _activeService = svc;
-  const tag = document.getElementById('register-service-tag');
-  setServiceTag(tag, svc);
+  setServiceTag(document.getElementById('register-service-tag'), svc);
   document.getElementById('register-form').reset();
+  document.getElementById('register-step1').style.display = '';
+  document.getElementById('register-step2').style.display = 'none';
   openModal('modal-register');
 }
 
-// ── Open choice popup (from service card click) ──
+// ── Open choice popup ──
 function openChoiceModal(svc) {
   _activeService = svc;
-  const tag    = document.getElementById('choice-service-tag');
-  const title  = document.getElementById('choice-title');
-  const sub    = document.getElementById('choice-sub');
-  setServiceTag(tag, svc);
+  setServiceTag(document.getElementById('choice-service-tag'), svc);
+  const title = document.getElementById('choice-title');
+  const sub   = document.getElementById('choice-sub');
   if (svc) {
     title.textContent = svc.service;
     sub.textContent   = 'How would you like to get started with this service?';
@@ -254,7 +330,6 @@ function openChoiceModal(svc) {
   openModal('modal-choice');
 }
 
-// Choice buttons inside choice modal
 function fromChoice(path) {
   closeModal('modal-choice');
   setTimeout(() => {
@@ -264,55 +339,64 @@ function fromChoice(path) {
 }
 
 // ── Service card clicks → choice popup ──
-document.addEventListener('serviceSelected', e => {
-  openChoiceModal(e.detail);
-});
+document.addEventListener('serviceSelected', e => openChoiceModal(e.detail));
 
 // ── Project form submit ──
 document.getElementById('project-form').addEventListener('submit', e => {
   e.preventDefault();
-  const btn = e.target.querySelector('.lr-submit');
+  const btn = document.getElementById('pf-submit');
   btn.textContent = 'Sending…';
   btn.disabled = true;
-
   setTimeout(() => {
-    const inner = document.getElementById('modal-project-content');
-    inner.innerHTML = `
+    document.getElementById('modal-project-content').innerHTML = `
       <div class="lr-success">
         <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
         <h3 class="text-white font-display font-bold text-xl mb-3">Project Brief Received!</h3>
         <p class="text-muted-light text-sm leading-relaxed mb-6">Our team will call you within <strong class="text-orange">2 hours</strong> to discuss your project and next steps.</p>
-        <button onclick="closeModal('modal-project')" class="lr-submit lr-submit--orange" style="max-width:200px;margin:0 auto;">
-          Close
-        </button>
+        <button onclick="closeModal('modal-project')" class="lr-submit lr-submit--orange" style="max-width:200px;margin:0 auto;">Done</button>
       </div>`;
   }, 1200);
 });
 
-// ── Register form submit → continues to project template ──
+// ── Register step 1: create account → show step 2 ──
 document.getElementById('register-form').addEventListener('submit', e => {
   e.preventDefault();
   const btn = e.target.querySelector('.lr-submit');
   btn.textContent = 'Creating account…';
   btn.disabled = true;
 
-  // Grab name & email to pre-fill project form
-  const name  = document.getElementById('rf-name').value;
-  const email = document.getElementById('rf-email').value;
-  const phone = document.getElementById('rf-phone').value;
-  const company = document.getElementById('rf-company').value;
-
   setTimeout(() => {
-    closeModal('modal-register');
-    setTimeout(() => {
-      openProjectModal(_activeService);
-      // Pre-fill shared fields
-      document.getElementById('pf-name').value    = name;
-      document.getElementById('pf-email').value   = email;
-      document.getElementById('pf-phone').value   = phone;
-      document.getElementById('pf-company').value = company;
-    }, 200);
-  }, 1000);
+    // Move to step 2
+    document.getElementById('register-step1').style.display = 'none';
+    document.getElementById('register-step2').style.display = '';
+    // Set tag for step 2
+    setServiceTag(document.getElementById('register2-service-tag'), _activeService);
+    // Pre-select industry if from service card
+    if (_activeService?.mode) {
+      const sel = document.getElementById('rb-industry');
+      sel.value = _activeService.mode;
+      onIndustryChangeReg(_activeService.mode);
+    }
+    // Scroll modal to top
+    document.getElementById('modal-register').querySelector('.lr-modal').scrollTop = 0;
+  }, 900);
+});
+
+// ── Register step 2: project brief submit ──
+document.getElementById('register-brief-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.lr-submit');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  setTimeout(() => {
+    document.getElementById('modal-register-content').innerHTML = `
+      <div class="lr-success">
+        <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+        <h3 class="text-white font-display font-bold text-xl mb-3">You're In!</h3>
+        <p class="text-muted-light text-sm leading-relaxed mb-6">Account created & project brief sent. Our team will call you within <strong class="text-purple">2 hours</strong>.</p>
+        <button onclick="closeModal('modal-register')" class="lr-submit lr-submit--purple" style="max-width:200px;margin:0 auto;">Done</button>
+      </div>`;
+  }, 1200);
 });
 
 /* ============================================================
