@@ -1326,6 +1326,13 @@
             </div>
           </form>
         </div>
+        <!-- Success screen (hidden by default) -->
+        <div id="project-success" class="lr-success" style="display:none;">
+          <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
+          <h3 class="text-white font-display font-bold text-xl mb-3">Project Brief Received!</h3>
+          <p class="text-muted-light text-sm leading-relaxed mb-6">Our team will call you within <strong class="text-orange">2 hours</strong> to discuss your project and next steps.</p>
+          <button onclick="closeModal('modal-project')" class="lr-submit lr-submit--orange" style="max-width:200px;margin:0 auto;">Done</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1450,6 +1457,13 @@
           </div>
         </div>
 
+        <!-- Register success screen (hidden by default) -->
+        <div id="register-success" class="lr-success" style="display:none;">
+          <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+          <h3 class="text-white font-display font-bold text-xl mb-3">You're In!</h3>
+          <p class="text-muted-light text-sm leading-relaxed mb-6">Account created &amp; project brief sent. Our team will call you within <strong class="text-purple">2 hours</strong>.</p>
+          <button onclick="closeModal('modal-register')" class="lr-submit lr-submit--purple" style="max-width:200px;margin:0 auto;">Done</button>
+        </div>
       </div>
     </div>
   </div>

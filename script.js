@@ -284,23 +284,23 @@ function onIndustryChangeReg(val) {
 function openProjectModal(svc) {
   _activeService = svc;
   setServiceTag(document.getElementById('project-service-tag'), svc);
-  // Reset
+  // Hide success, show form
+  document.getElementById('project-success').style.display    = 'none';
+  document.getElementById('modal-project-content').querySelector('.lr-modal-inner').style.display = '';
+  // Reset form
   document.getElementById('project-form').reset();
   document.getElementById('pf-services-wrap').style.display  = 'none';
   document.getElementById('pf-other-wrap').style.display     = 'none';
   document.getElementById('pf-services-list').innerHTML      = '';
   document.getElementById('pf-submit').textContent           = 'Send My Project Brief →';
   document.getElementById('pf-submit').disabled              = false;
-  // Restore form if it was replaced by success screen
-  if (!document.getElementById('project-form').isConnected) {
-    location.reload(); return; // fallback
-  }
   // Pre-select industry if coming from a service card
   if (svc?.mode) {
     const sel = document.getElementById('pf-industry');
     sel.value = svc.mode;
     onIndustryChange(svc.mode);
   }
+  document.getElementById('modal-project').querySelector('.lr-modal').scrollTop = 0;
   openModal('modal-project');
 }
 
@@ -308,9 +308,14 @@ function openProjectModal(svc) {
 function openRegisterModal(svc) {
   _activeService = svc;
   setServiceTag(document.getElementById('register-service-tag'), svc);
+  // Hide success, show step 1
+  document.getElementById('register-success').style.display  = 'none';
+  document.getElementById('register-step1').style.display    = '';
+  document.getElementById('register-step2').style.display    = 'none';
   document.getElementById('register-form').reset();
-  document.getElementById('register-step1').style.display = '';
-  document.getElementById('register-step2').style.display = 'none';
+  const btn = document.getElementById('register-form').querySelector('.lr-submit');
+  btn.textContent = 'Continue to Project Brief →';
+  btn.disabled    = false;
   openModal('modal-register');
 }
 
@@ -348,13 +353,9 @@ document.getElementById('project-form').addEventListener('submit', e => {
   btn.textContent = 'Sending…';
   btn.disabled = true;
   setTimeout(() => {
-    document.getElementById('modal-project-content').innerHTML = `
-      <div class="lr-success">
-        <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
-        <h3 class="text-white font-display font-bold text-xl mb-3">Project Brief Received!</h3>
-        <p class="text-muted-light text-sm leading-relaxed mb-6">Our team will call you within <strong class="text-orange">2 hours</strong> to discuss your project and next steps.</p>
-        <button onclick="closeModal('modal-project')" class="lr-submit lr-submit--orange" style="max-width:200px;margin:0 auto;">Done</button>
-      </div>`;
+    document.getElementById('modal-project-content').querySelector('.lr-modal-inner').style.display = 'none';
+    document.getElementById('project-success').style.display = '';
+    document.getElementById('modal-project').querySelector('.lr-modal').scrollTop = 0;
   }, 1200);
 });
 
@@ -389,13 +390,9 @@ document.getElementById('register-brief-form').addEventListener('submit', e => {
   btn.textContent = 'Sending…';
   btn.disabled = true;
   setTimeout(() => {
-    document.getElementById('modal-register-content').innerHTML = `
-      <div class="lr-success">
-        <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
-        <h3 class="text-white font-display font-bold text-xl mb-3">You're In!</h3>
-        <p class="text-muted-light text-sm leading-relaxed mb-6">Account created & project brief sent. Our team will call you within <strong class="text-purple">2 hours</strong>.</p>
-        <button onclick="closeModal('modal-register')" class="lr-submit lr-submit--purple" style="max-width:200px;margin:0 auto;">Done</button>
-      </div>`;
+    document.getElementById('register-step2').style.display   = 'none';
+    document.getElementById('register-success').style.display = '';
+    document.getElementById('modal-register').querySelector('.lr-modal').scrollTop = 0;
   }, 1200);
 });
 
