@@ -1639,6 +1639,161 @@
         if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
       });
     });
+
+    // ══════════════════════════════════════════════
+    //  MODALS
+    // ══════════════════════════════════════════════
+    let _activeService = null;
+
+    const SERVICES = {
+      startup:    ['Launch Landing Page','Waitlist & Pre-launch Site','MVP Web App','SaaS Marketing Site','Growth & SEO Marketing'],
+      industrial: ['Digital Credibility Site','Product & Equipment Catalog','B2B Lead Generation','Certifications Showcase','Legacy Site Overhaul','Industrial SEO & Marketing'],
+    };
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+      if (!document.querySelector('.lr-overlay.open')) document.body.style.overflow = '';
+    }
+
+    // Close on backdrop click & ESC
+    document.querySelectorAll('.lr-overlay').forEach(ov => {
+      ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.lr-overlay.open').forEach(ov => closeModal(ov.id));
+    });
+
+    // ── Industry → dynamic service checkboxes ──
+    function buildServiceList(listId, wrapId, industry, preSelected) {
+      const wrap = document.getElementById(wrapId);
+      const list = document.getElementById(listId);
+      if (!industry || industry === 'other') { wrap.style.display = 'none'; list.innerHTML = ''; return; }
+      const items   = SERVICES[industry] || [];
+      const accent  = industry === 'industrial' ? 'checked-ind' : 'checked-sta';
+      const cbClass = industry === 'startup'    ? 'sta'         : '';
+      list.innerHTML = [...items, 'Other / Not sure yet'].map(svc => {
+        const chk = preSelected === svc ? 'checked' : '';
+        return `<label class="lr-checkbox-item${chk ? ' '+accent : ''}">
+          <input type="checkbox" class="${cbClass}" value="${svc}" ${chk}
+            onchange="this.closest('label').className='lr-checkbox-item'+(this.checked?' ${accent}':'')">
+          <span class="lr-checkbox-label">${svc}</span>
+        </label>`;
+      }).join('');
+      wrap.style.display = '';
+    }
+
+    function onIndustryChange(val) {
+      const sWrap = document.getElementById('pf-services-wrap');
+      const oWrap = document.getElementById('pf-other-wrap');
+      if (val === 'other') { sWrap.style.display='none'; oWrap.style.display=''; document.getElementById('pf-services-list').innerHTML=''; }
+      else { oWrap.style.display='none'; buildServiceList('pf-services-list','pf-services-wrap', val, _activeService?.service); }
+    }
+    function onIndustryChangeReg(val) {
+      const sWrap = document.getElementById('rb-services-wrap');
+      const oWrap = document.getElementById('rb-other-wrap');
+      if (val === 'other') { sWrap.style.display='none'; oWrap.style.display=''; document.getElementById('rb-services-list').innerHTML=''; }
+      else { oWrap.style.display='none'; buildServiceList('rb-services-list','rb-services-wrap', val, _activeService?.service); }
+    }
+
+    function setServiceTag(tagEl, svc) {
+      if (!tagEl) return;
+      if (!svc) { tagEl.textContent='Project Brief'; tagEl.className='lr-service-tag lr-service-tag--none'; return; }
+      tagEl.className = 'lr-service-tag ' + (svc.mode==='industrial' ? 'lr-service-tag--ind' : 'lr-service-tag--sta');
+      tagEl.textContent = svc.service + (svc.delivery ? ' · Live in '+svc.delivery : '');
+    }
+
+    // ── LAUNCH MY PROJECT ──
+    function openProjectModal(svc) {
+      _activeService = svc;
+      setServiceTag(document.getElementById('project-service-tag'), svc);
+      document.getElementById('project-success').style.display = 'none';
+      document.getElementById('modal-project-content').querySelector('.lr-modal-inner').style.display = '';
+      document.getElementById('project-form').reset();
+      document.getElementById('pf-services-wrap').style.display = 'none';
+      document.getElementById('pf-other-wrap').style.display    = 'none';
+      document.getElementById('pf-services-list').innerHTML     = '';
+      const btn = document.getElementById('pf-submit');
+      btn.textContent = 'Send My Project Brief →'; btn.disabled = false;
+      if (svc?.mode) { document.getElementById('pf-industry').value = svc.mode; onIndustryChange(svc.mode); }
+      document.getElementById('modal-project').querySelector('.lr-modal').scrollTop = 0;
+      openModal('modal-project');
+    }
+
+    document.getElementById('project-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = document.getElementById('pf-submit');
+      btn.textContent = 'Sending…'; btn.disabled = true;
+      setTimeout(() => {
+        document.getElementById('modal-project-content').querySelector('.lr-modal-inner').style.display = 'none';
+        document.getElementById('project-success').style.display = '';
+        document.getElementById('modal-project').querySelector('.lr-modal').scrollTop = 0;
+      }, 1200);
+    });
+
+    // ── REGISTER WITH WINNERS ──
+    function openRegisterModal(svc) {
+      _activeService = svc;
+      setServiceTag(document.getElementById('register-service-tag'), svc);
+      document.getElementById('register-success').style.display = 'none';
+      document.getElementById('register-step1').style.display   = '';
+      document.getElementById('register-step2').style.display   = 'none';
+      document.getElementById('register-form').reset();
+      const btn = document.getElementById('register-form').querySelector('.lr-submit');
+      btn.textContent='Continue to Project Brief →'; btn.disabled=false;
+      openModal('modal-register');
+    }
+
+    document.getElementById('register-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.lr-submit');
+      btn.textContent='Creating account…'; btn.disabled=true;
+      setTimeout(() => {
+        document.getElementById('register-step1').style.display = 'none';
+        document.getElementById('register-step2').style.display = '';
+        setServiceTag(document.getElementById('register2-service-tag'), _activeService);
+        if (_activeService?.mode) { document.getElementById('rb-industry').value = _activeService.mode; onIndustryChangeReg(_activeService.mode); }
+        document.getElementById('modal-register').querySelector('.lr-modal').scrollTop = 0;
+      }, 900);
+    });
+
+    document.getElementById('register-brief-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.lr-submit');
+      btn.textContent='Sending…'; btn.disabled=true;
+      setTimeout(() => {
+        document.getElementById('register-step2').style.display   = 'none';
+        document.getElementById('register-success').style.display = '';
+        document.getElementById('modal-register').querySelector('.lr-modal').scrollTop = 0;
+      }, 1200);
+    });
+
+    // ── SERVICE CARD CLICK → choice popup ──
+    function openChoiceModal(svc) {
+      _activeService = svc;
+      setServiceTag(document.getElementById('choice-service-tag'), svc);
+      document.getElementById('choice-title').textContent = svc ? svc.service : 'How would you like to proceed?';
+      document.getElementById('choice-sub').textContent   = svc ? 'How would you like to get started with this service?' : 'Choose how you want to get started.';
+      openModal('modal-choice');
+    }
+    function fromChoice(path) {
+      closeModal('modal-choice');
+      setTimeout(() => { path==='launch' ? openProjectModal(_activeService) : openRegisterModal(_activeService); }, 180);
+    }
+
+    document.querySelectorAll('.svc-service-card').forEach(card => {
+      card.addEventListener('click', () => {
+        openChoiceModal({
+          service:  card.dataset.service  || card.querySelector('h3')?.textContent.trim(),
+          mode:     card.dataset.mode     || '',
+          delivery: card.dataset.delivery || ''
+        });
+      });
+    });
+
   </script>
 </body>
 </html>
