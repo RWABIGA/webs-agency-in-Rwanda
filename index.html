@@ -178,16 +178,43 @@
       box-shadow: 0 0 28px rgba(155,127,244,0.10), inset 0 0 24px rgba(155,127,244,0.04);
     }
 
-    /* ── Lit state: scroll past a card → brighter ── */
+    /* ── Shine keyframes ── */
+    @keyframes shineSwipe {
+      0%   { transform: translateX(-130%) skewX(-18deg); }
+      100% { transform: translateX(230%)  skewX(-18deg); }
+    }
+    @keyframes pulseGlowInd {
+      0%,100% { box-shadow: 0 0 55px rgba(232,104,60,0.28), 0 0 18px rgba(232,104,60,0.14), inset 0 0 36px rgba(232,104,60,0.07); }
+      50%      { box-shadow: 0 0 80px rgba(232,104,60,0.45), 0 0 30px rgba(232,104,60,0.22), inset 0 0 50px rgba(232,104,60,0.12); }
+    }
+    @keyframes pulseGlowSta {
+      0%,100% { box-shadow: 0 0 55px rgba(155,127,244,0.28), 0 0 18px rgba(155,127,244,0.14), inset 0 0 36px rgba(155,127,244,0.07); }
+      50%      { box-shadow: 0 0 80px rgba(155,127,244,0.45), 0 0 30px rgba(155,127,244,0.22), inset 0 0 50px rgba(155,127,244,0.12); }
+    }
+
+    /* ── Lit state: scroll past a card → brighter + pulsing shine ── */
     .svc-service-card--ind.svc-lit {
       background: rgba(232,104,60,0.11);
       border-color: rgba(232,104,60,0.60);
       box-shadow: 0 0 55px rgba(232,104,60,0.28), 0 0 18px rgba(232,104,60,0.14), inset 0 0 36px rgba(232,104,60,0.07);
+      animation: pulseGlowInd 2.2s ease-in-out infinite;
     }
     .svc-service-card--sta.svc-lit {
       background: rgba(155,127,244,0.11);
       border-color: rgba(155,127,244,0.60);
       box-shadow: 0 0 55px rgba(155,127,244,0.28), 0 0 18px rgba(155,127,244,0.14), inset 0 0 36px rgba(155,127,244,0.07);
+      animation: pulseGlowSta 2.2s ease-in-out infinite;
+    }
+
+    /* Shine sweep — pseudo-element on lit cards */
+    .svc-service-card { overflow: hidden; position: relative; }
+    .svc-service-card.svc-lit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.07) 50%, transparent 60%);
+      animation: shineSwipe 2.4s ease-in-out infinite;
+      pointer-events: none;
     }
     .nav-link { transition: opacity 0.2s; }
     .nav-link:hover { opacity: 1 !important; }
